@@ -99,6 +99,125 @@
                 }
             }
         },
+        "/users/userLogin": {
+            "post": {
+                "tags": [
+                    "USER"
+                ],
+                "summary": "Method used login user",
+                "security": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "contentType"
+                                ],
+                                "properties": {
+                                    "language": {
+                                        "type": "string",
+                                        "default": "en"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "default": "test@gmail.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "default": "12345678"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "unexpected error"
+                    }
+                }
+            }
+        },
+        "/users/changePassword": {
+            "patch": {
+                "tags": [
+                    "USER"
+                ],
+                "summary": "Method used change user password",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "contentType"
+                                ],
+                                "properties": {
+                                    "language": {
+                                        "type": "string",
+                                        "default": "en"
+                                    },
+                                    "oldPassword": {
+                                        "type": "string",
+                                        "default": "test@gmail.com"
+                                    },
+                                    "newPassword": {
+                                        "type": "string",
+                                        "default": "12345678"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "unexpected error"
+                    }
+                }
+            }
+        },
         "/users/getUserDetail": {
             "get": {
                 "tags": [

@@ -9,8 +9,9 @@ import userModel from "../models/users.js";
 //Response
 import userResponse from "../response/userResponse.js";
 //Functions
+import logger from '../../logger.js';
 import config from "../helper/envconfig/envVars.js";
-import { emailExist, getUserById } from "./service.js";
+import { emailExist, getUserByEmail, getUserById } from "./service.js";
 import { createJwtToken, getMessage } from "../helper/common/helpers.js";
 
 
@@ -88,6 +89,111 @@ export const userRegister = async (req, res) => {
             status: false,
             message: error.message,
         })
+    }
+};
+
+/**
+ * @Method method used to user login by email and password
+ * @param {*} req 
+ * @param {*} res 
+ * @date 10-FEB-2025 
+ */
+export const userLogin = async (req, res) => {
+    try {
+
+        const { language, email, password } = req.body;
+
+        //valifation
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).send({
+                status: false,
+                message: await getMessage(language, errors.error[0]['msg']),
+            })
+        }
+        //get user by email
+        const checkUser = await getUserByEmail(email.toLowerCase());
+        if (!checkUser) {
+            return res.status(404).send({
+                status: false,
+                message: await getMessage(language, "User_Does_Not_Exist"),
+            })
+        }
+
+        if (bcrypt.compareSync(password, checkUser.password)) {
+
+            //generate jwt token
+            const token = await createJwtToken({ id: checkUser._id });
+
+            return res.status(200).send({
+                status: true,
+                message: await getMessage(language, "User_Login_Success"),
+                token: token,
+                data: new userResponse(checkUser),
+            })
+        } else {
+            return res.status(400).send({
+                status: false,
+                message: await getMessage(language, "Envalid_Email_Password")
+            })
+        }
+    } catch (error) {
+        return res.status(500).send({
+            status: false,
+            message: error.message
+        })
+    }
+}
+/**
+ * @Method used to change user password
+ * @param {*} req 
+ * @param {*} res 
+ * @date 10-FEB-2025
+ */
+export const changePassword = async (req, res) => {
+    try {
+        const { language, oldPassword, newPassword } = req.body;
+        //decoded user id
+        const userId = req.user.id; // Get user ID from auth middleware
+
+        // Find user
+        const user = await getUserById(userId);
+        if (!user) {
+            return res.status(404).send({
+                status: false,
+                message: "User_Not_Found"
+            });
+        }
+
+        // Check if old password is correct
+        const isMatch = bcrypt.compareSync(oldPassword, user.password);
+        if (!isMatch) {
+            return res.status(400).send({
+                status: false,
+                message: await getMessage(language, "Old_Password_Incorrect")
+            });
+        }
+
+        //update new passowrd in DB
+        await userModel.updateOne(
+            { _id: userId },
+            {
+                $set: {
+                    password: bcrypt.hashSync(newPassword, 10)
+                }
+            }
+        )
+        res.status(200).send({
+            status: true,
+            message: await getMessage(language, "Password_Chnage_Success")
+        });
+
+    } catch (error) {
+        logger.error("changePassword : Error==>> " + error.message);
+        res.status(500).send({
+            status: false,
+            message: error.message
+        });
     }
 };
 

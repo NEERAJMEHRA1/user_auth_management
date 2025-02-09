@@ -10,7 +10,13 @@ const MESSAGES_DATA = Object.freeze({
     User_List_Fetched_Success: "User list fetched successfully.",
     Email_Id_Required: "Email is required.",
     Password_Is_Required: "Password is required.",
-    User_Name_Required: "User name is required."
+    User_Name_Required: "User name is required.",
+    User_Does_Not_Exist: "User does not exist with this Email Id.",
+    Invalid_Email_Password: "Invalid Email Address or Password.",
+    User_Login_Success: "User login successfully.",
+    User_Not_Found: "User not found.",
+    Old_Password_Incorrect: "Old password is incorrect.",
+    Password_Chnage_Success: "Password changed successfully.",
 });
 
 export default MESSAGES_DATA;

@@ -39,3 +39,20 @@ export const getUserById = async (userId) => {
         throw new Error(error.message);
     }
 };
+
+/**
+ * @Method method used to get user by email
+ * @param {*} email 
+ * @date 10-FEB-2025
+ */
+export const getUserByEmail = async (email) => {
+    try {
+        //get user by email
+        const getUser = await userModel.findOne({ email: email });
+
+        return getUser;
+
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
